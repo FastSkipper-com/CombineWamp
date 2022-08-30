@@ -2,6 +2,8 @@ import Combine
 import Foundation
 import FoundationExtensions
 
+public typealias CalleeResponseArguments = (positionalArguments: [ElementType]?, namedArguments: [String:ElementType]?)
+
 /// WAMP Callee is a WAMP Client role that allows this Peer to register RPC procedures and respond to their calls
 public struct WampCallee {
     let session: WampSession
@@ -11,7 +13,7 @@ public struct WampCallee {
     }
 
     public func register(procedure: URI, onUnregister: @escaping (Result<Message.Unregistered, ModuleError>) -> Void = { _ in })
-    -> AnyPublisher<(invocation: Message.Invocation, responder: ([ElementType]) -> Publishers.Promise<Void, ModuleError>), ModuleError> {
+    -> AnyPublisher<(invocation: Message.Invocation, responder: (CalleeResponseArguments) -> Publishers.Promise<Void, ModuleError>), ModuleError> {
         let session = self.session
         guard let id = session.idGenerator.next() else { return Fail(error: .sessionIsNotValid).eraseToAnyPublisher() }
         let messageBus = session.messageBus
@@ -35,7 +37,7 @@ public struct WampCallee {
                 }
                 .promise(onEmpty: { .failure(.sessionIsNotValid) })
         }
-        .map { registeredMessage -> AnyPublisher<(invocation: Message.Invocation, responder: ([ElementType]) -> Publishers.Promise<Void, ModuleError>), ModuleError> in
+        .map { registeredMessage -> AnyPublisher<(invocation: Message.Invocation, responder: (CalleeResponseArguments) -> Publishers.Promise<Void, ModuleError>), ModuleError> in
             messageBus
                 .setFailureType(to: ModuleError.self)
                 .compactMap { message in
@@ -68,9 +70,9 @@ public struct WampCallee {
         .eraseToAnyPublisher()
     }
 
-    private static func responder(session: WampSession, invocation: Message.Invocation, response: [ElementType]) -> Publishers.Promise<Void, ModuleError> {
+    private static func responder(session: WampSession, invocation: Message.Invocation, response: CalleeResponseArguments) -> Publishers.Promise<Void, ModuleError> {
         return session.send(
-            Message.yield(.init(request: invocation.request, options: [:], positionalArguments: response, namedArguments: nil))
+            Message.yield(.init(request: invocation.request, options: [:], positionalArguments: response.0, namedArguments: response.1))
         )
     }
 

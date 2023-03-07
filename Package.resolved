@@ -3,20 +3,20 @@
     "pins": [
       {
         "package": "CombineWebSocket",
-        "repositoryURL": "https://github.com/teufelaudio/CombineWebSocket.git",
+        "repositoryURL": "https://github.com/FastSkipper-com/CombineWebSocket.git",
         "state": {
           "branch": null,
-          "revision": "2bc1545f1ba4f45c7a29ba4fbe46993468794dc5",
+          "revision": "358d3a7eaffa6f8a23fe7e86968f5f9a06860231",
           "version": "0.1.1"
         }
       },
       {
         "package": "FoundationExtensions",
-        "repositoryURL": "https://github.com/teufelaudio/FoundationExtensions.git",
+        "repositoryURL": "https://github.com/FastSkipper-com/FoundationExtensions.git",
         "state": {
           "branch": null,
-          "revision": "c030f2323ca29b9c41ecc9d5f467dcc1bb1db17a",
-          "version": "0.1.5"
+          "revision": "7e4c8e5b3866830bae1bb98011442b68b6809802",
+          "version": "0.1.1"
         }
       }
     ]

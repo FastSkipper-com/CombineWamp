@@ -69,7 +69,7 @@ final class CalleeTests: IntegrationTestBase {
                     XCTAssertEqual(first, 99)
                     XCTAssertEqual(second, 57)
                     invocationExpectation.fulfill()
-                    responder([.integer(first - second)])
+                    responder(([ElementType.integer(first - second)], nil))
                         .run(onSuccess: { _ in successfulYieldExpectation.fulfill() },
                              onFailure: { error in XCTFail(error.localizedDescription) }
                         )

@@ -36,4 +36,29 @@ public struct WampCaller {
         }
         .promise
     }
+
+    public func progressCall(procedure: URI, positionalArguments: [ElementType]? = nil) -> AnyPublisher<Message.Result, ModuleError> {
+        guard let id = session.idGenerator.next()
+            else { return Fail<Message.Result, ModuleError>(error: .sessionIsNotValid).eraseToAnyPublisher() }
+        let messageBus = session.messageBus
+
+        return session.send(
+            Message.call(.init(request: id, options: [:], procedure: procedure, positionalArguments: positionalArguments, namedArguments: nil))
+        )
+        .flatMap { () -> AnyPublisher<Message.Result, ModuleError> in
+            messageBus
+                .setFailureType(to: ModuleError.self)
+                .flatMap { message -> AnyPublisher<Message.Result, ModuleError> in
+                    if case let .result(result) = message, result.request == id {
+                        return Just<Message.Result>(result).setFailureType(to: ModuleError.self).eraseToAnyPublisher()
+                    }
+
+                    if case let .error(error) = message, error.requestType == Message.Call.type, error.request == id {
+                        return Fail<Message.Result, ModuleError>(error: .commandError(error)).eraseToAnyPublisher()
+                    }
+
+                    return Empty().eraseToAnyPublisher()
+                }.eraseToAnyPublisher()
+        }.eraseToAnyPublisher()
+    }
 }

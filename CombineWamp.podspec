@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name             = 'CombineWamp'
-    s.version          = '0.1.1'
+    s.version          = '0.1.2'
     s.summary          = 'WAMP protocol (https://wamp-proto.org) implemented using iOS 13 WebSocket and Combine'
   
     s.homepage         = 'https://github.com/FastSkipper-com/CombineWamp.git'
